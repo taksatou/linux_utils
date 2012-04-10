@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# - toggle 'show desktop'
+#
+# see also: http://ubuntuforums.org/showthread.php?t=1615199
+# requirement: wmctrl
+#
+if wmctrl -m | grep "mode: ON"; then
+exec wmctrl -k off
+else
+exec wmctrl -k on
+fi
+

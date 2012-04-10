@@ -1,0 +1,2 @@
+#!/bin/bash
+if [ `find $HOME/tmp -type f | wc -l` -gt 0 ]; then mv $HOME/tmp $HOME/data/archive/`date +%Y%m%d` && mkdir $HOME/tmp ; fi
