@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+cmd=$1
+shift
+
+if [ -z $GCJCL ]; then
+    GCJCL=$HOME/lib/codejam-commandline
+fi
+
+SOURCE=./source
+
+case $cmd in
+    init)
+        $GCJCL/gcj_init_contest.py $*
+        mkdir $SOURCE
+        ;;
+    download)
+        $GCJCL/gcj_download_input.py $*
+        ;;
+    submit)
+        $GCJCL/gcj_submit_solution.py $*
+        ;;
+    status)
+        $GCJCL/gcj_get_status.py
+        ;;
+    clear)
+        $GCJCL/gcj_clear_contest.py
+    *)
+        echo "usage: $0 (init|download|submit|status|clear) <options...>"
+        exit 1
+esac
