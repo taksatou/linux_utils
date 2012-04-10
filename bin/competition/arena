@@ -4,4 +4,4 @@ if [ -z $TOPCODER_APPLET ]; then
     TOPCODER_APPLET=./ContestAppletProd.jnlp
 fi
 
-nohup javaws $(TOPCODER_APPLET) &
+nohup javaws $TOPCODER_APPLET &
