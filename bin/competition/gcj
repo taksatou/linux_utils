@@ -25,6 +25,7 @@ case $cmd in
         ;;
     clear)
         $GCJCL/gcj_clear_contest.py
+        ;;
     *)
         echo "usage: $0 (init|download|submit|status|clear) <options...>"
         exit 1
