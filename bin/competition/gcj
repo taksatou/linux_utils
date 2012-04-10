@@ -11,8 +11,8 @@ SOURCE=./source
 
 case $cmd in
     init)
-        $GCJCL/gcj_init_contest.py $*
         mkdir $SOURCE
+        $GCJCL/gcj_init_contest.py $*
         ;;
     download)
         $GCJCL/gcj_download_input.py $*
