@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+require 'nokogiri'
+require 'open-uri'
+
+if ARGV.size < 2
+  puts "usage: #{__FILE__} url css_path code"
+  exit 1
+end
+
+url = ARGV[0]
+path = ARGV[1]
+code = ARGV[2]
+
+doc = Nokogiri::HTML(open(url).read)
+doc.css(path).each do |x|
+  eval code
+end
