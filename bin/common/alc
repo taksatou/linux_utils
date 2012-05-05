@@ -14,17 +14,21 @@ doc.css('div#resultsArea div#resultsList ul').children.each do |x|
   next if x.text.strip.empty?
   puts x.css('.midashi').text.color(:green)
   if x.css('div span').count > 1
-    tmp = ''
     x.css('div').children.each do |y|
-      if y.attr('class') == 'wordclass'
-        puts tmp, '' unless tmp.strip.empty?
+      if y.attr('class') == 'label' || y.attr('class') == 'wordclass'
         puts y.text.underline
-        tmp = "\t"
+        print "\t"
       else
-        tmp += y.text
+        if y.attr('class') == 'kana'
+          next
+        elsif y.next and y.next.attr('class') == 'kana'
+          print y.text
+        else
+          puts y.text
+        end
+
       end
     end
-    puts tmp unless tmp.strip.empty?
   else
     puts x.css('div').text
   end
