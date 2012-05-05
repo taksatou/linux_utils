@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 
 require 'nokogiri'
 require 'open-uri'
@@ -12,26 +13,14 @@ doc = Nokogiri::HTML(open('http://eow.alc.co.jp/search?q=' + q).read)
 
 doc.css('div#resultsArea div#resultsList ul').children.each do |x|
   next if x.text.strip.empty?
+  next if x.css('.midashi').text.strip.empty?
   puts x.css('.midashi').text.color(:green)
-  if x.css('div span').count > 1
-    x.css('div').children.each do |y|
-      if y.attr('class') == 'label' || y.attr('class') == 'wordclass'
-        puts y.text.underline
-        print "\t"
-      else
-        if y.attr('class') == 'kana'
-          next
-        elsif y.next and y.next.attr('class') == 'kana'
-          print y.text
-        else
-          puts y.text
-        end
-
-      end
-    end
+  if x.css('div ul').empty?
+    puts x.css('div').text.gsub(/(【.+?】)/, "\n#{$1}")
   else
-    puts x.css('div').text
+    x.css('div ul').children.each {|y| puts '- ' + y.text }
   end
+
 
   puts '----------------'
 end
