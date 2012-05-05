@@ -21,7 +21,6 @@ doc.css('div#resultsArea div#resultsList ul').children.each do |x|
     x.css('div ul').children.each {|y| puts '- ' + y.text }
   end
 
-
   puts '----------------'
 end
 
