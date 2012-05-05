@@ -7,7 +7,7 @@ require 'cgi'
 
 Sickill::Rainbow.enabled = true
 
-q = ARGV.join(' ')
+q = CGI.escape ARGV.join(' ')
 doc = Nokogiri::HTML(open('http://eow.alc.co.jp/search?q=' + q).read)
 
 doc.css('div#resultsArea div#resultsList ul').children.each do |x|
