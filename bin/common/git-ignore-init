@@ -1,0 +1,19 @@
+#!/bin/sh
+
+#
+# generate .gitignore automatically
+#
+GITIGNORE_ARCH=https://github.com/github/gitignore/tarball/master
+TARGET=/tmp/gitignore-init/cache
+
+if [ ! -e /tmp/gitignore-init/cache/gitignore ]; then
+    mkdir -p $TARGET
+    wget -O $TARGET/gitignore.tgz $GITIGNORE_ARCH
+    tar xzf $TARGET/gitignore.tgz -C $TARGET
+    mv `find /tmp/gitignore-init/cache -type d -name 'github*' | head -n 1` $TARGET/gitignore
+fi
+
+echo > .gitignore
+for i in $*; do
+    cat $TARGET/gitignore/$i.gitignore >> .gitignore
+done
