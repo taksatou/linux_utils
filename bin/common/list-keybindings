@@ -1,0 +1,2 @@
+#!/bin/bash
+for i in $(gconftool-2 --get /apps/compiz-1/general/screen0/options/active_plugins|sed "s/\[\|\]//g"|sed "s/,/ /g"); do echo "# $i:"; gconftool-2 -a /apps/compiz-1/plugins/"$i"/screen0/options | grep "_key\|_button\|trigger_\|initiate\ \|panel_first_menu\|keyboard_focus\|execute_command\|show_launcher" | grep -v "Disabled\|=[[:space:]]*$" | sort; done; echo -e "\n# metacity overrides:"; gconftool-2 -a /apps/metacity/global_keybindings | grep -v "disabled\|cycle\|switch_panels" | sort; gconftool-2 -a /apps/metacity/window_keybindings | grep -v "disabled" | sort
