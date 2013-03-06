@@ -1,3 +1,22 @@
 #!/bin/sh
 
-date +"%Y/%m/%d %H:%M:%S"
+A=$1
+
+if [ -z $A ]; then
+    A=0
+fi
+echo $A
+
+case $A in
+    0)
+        date +"%Y/%m/%d %H:%M:%S"
+        ;;
+    1)
+        date +"%Y-%m-%d %H:%M:%S"
+        ;;
+    # add format here
+    *)
+        date +"%Y/%m/%d %H:%M:%S"
+        ;;
+esac
+
