@@ -44,7 +44,7 @@ $(TARGET): $(objects)
 	$(CC) $(LDFLAGS) $(objects) $(LIBS) -o $@
 
 clean:
-	rm -rf $(objects) $(TARGET) .deps *.d
+	rm -rf $(objects) $(TARGET) .deps *.d core
 
 .deps: $(SOURCES)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $^ > ./.deps

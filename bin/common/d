@@ -5,7 +5,6 @@ A=$1
 if [ -z $A ]; then
     A=0
 fi
-echo $A
 
 case $A in
     0)
@@ -13,6 +12,9 @@ case $A in
         ;;
     1)
         date +"%Y-%m-%d %H:%M:%S"
+        ;;
+    s)
+        date +"%Y-%m-%d"
         ;;
     # add format here
     *)

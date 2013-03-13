@@ -23,6 +23,3 @@ doc.css('div#resultsArea div#resultsList ul').children.each do |x|
 
   puts '----------------'
 end
-
-
-
