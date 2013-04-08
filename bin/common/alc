@@ -9,7 +9,6 @@ require 'cgi'
 Sickill::Rainbow.enabled = true
 
 q = CGI.escape ARGV.join(' ')
-`echo #{q} >> ~/.alc_history`
 doc = Nokogiri::HTML(open('http://eow.alc.co.jp/search?q=' + q).read)
 
 doc.css('div#resultsArea div#resultsList ul').children.each do |x|
@@ -24,3 +23,5 @@ doc.css('div#resultsArea div#resultsList ul').children.each do |x|
 
   puts '----------------'
 end
+
+`echo #{q} >> ~/.alc_history` unless doc.css('div#resultsArea div#resultsList ul').children.empty?
