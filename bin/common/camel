@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'active_support/core_ext'
+
+s = ARGF.read
+if s.camelize == s
+  print s.underscore
+else
+  print s.camelize
+end
