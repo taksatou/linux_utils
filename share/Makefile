@@ -1,26 +1,27 @@
+EXETARGET := 
+LIBTARGET := libims
 
-TARGET := yourexecutable
+SOURCES := list.c
 
-SOURCES := src/a.c   \
-           src/b.c 
-
+# 
+UNAME := $(shell uname)
 
 # C compiler command
 CC := cc
 
 # C compiler flags
-CFLAGS := -g -Wextra
+CFLAGS := -g -Wextra -std=c99
 
 # linker flags, e.g. -L<lib dir> if you have libraries
 # in a nonstandard directory <lib dir>
-LDFLAGS := -L/home/takayuki/data/build/libuv/libuv
+LDFLAGS :=
 
 # libraries to pass to the linker, e.g. -l<library>
-LIBS := -luv -lpthread -lrt
+LIBS := -lpthread
 
 # Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
 # you have headers in a nonstandard directory <include dir>
-CPPFLAGS := -I/home/takayuki/data/build/libuv/libuv/include -I./include
+CPPFLAGS := 
 
 # C preprocessor
 CPP :=
@@ -36,12 +37,30 @@ CXXCPP :=
 
 objects := $(subst .c,.o,$(SOURCES))
 
+# targets
+ifdef EXETARGET
+TARGET += $(EXETARGET)
+endif
 
-all: $(TARGET)
+ifdef LIBTARGET
+LIBVERSION ?= 1
+SOTARGET := $(LIBTARGET).so.$(LIBVERSION)
+ATARGET := $(LIBTARGET).a
+LNTARGET := $(LIBTARGET).so
+
+CFLAGS += -fPIC
+TARGET += $(SOTARGET) $(ATARGET) $(LNTARGET)
+
+ifeq ($(UNAME),Linux)
+	LDFLAGS += -Wl,-soname,$(SOTARGET)
+else ifeq ($(UNAME),Darwin)
+	LDFLAGS += -Wl,-install_name,$(SOTARGET)
+endif
+
+endif
+
 .PHONY: clean
-
-$(TARGET): $(objects)
-	$(CC) $(LDFLAGS) $(objects) $(LIBS) -o $@
+all:: $(TARGET)
 
 clean:
 	rm -rf $(objects) $(TARGET) .deps *.d core
@@ -52,5 +71,17 @@ clean:
 %.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
--include .deps
+$(EXETARGET): $(objects)
+	$(CC) $(LDFLAGS) $(LIBS) $^ -o $@
 
+$(SOTARGET): $(objects)
+	$(CC) -shared $(LDFLAGS) $^ -o $@
+
+$(ATARGET): $(objects)
+	$(AR) cru $@ $^
+	ranlib $@
+
+$(LNTARGET): $(SOTARGET)
+	ln -s $< $@
+
+-include .deps
