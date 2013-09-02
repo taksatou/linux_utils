@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+require 'rainbow'
+require 'cgi'
+require 'nokogiri'
+require 'open-uri'
+
+Sickill::Rainbow.enabled = true
+
+q = CGI.escape ARGV.join(' ')
+doc = Nokogiri::HTML(open("http://endic.naver.jp/srch/all/N/#{q}").read)
+doc.css('div#zoom_content.zoom_con_lv1').children.each do |content|
+
+  if content.css("dl").count > 0 then
+    puts "=============================="
+    # puts content.css("h3").text
+    # puts "=============================="
+
+    content.css("dl").children.each do |dl|
+      if dl.name == "dt"
+        title = dl.css("a").text.strip
+        puts ""
+        puts title.color(:green)
+        puts '-' * title.size
+      elsif dl.name == "text"
+        #puts "text>> " +  dl.text.strip
+      else
+        puts dl.css("p").children.map{|p| if p.text.strip.empty? then "\n" else p.text.strip end } .join("  ")
+      end
+    end
+  elsif content.css("ul").count > 0 then
+    puts "=============================="
+    # puts content.css("h3").text
+    # puts "=============================="
+
+    content.css("ul li.utb").each do |ul|
+      if ul.name == 'li'
+        puts ul.css(".fnt_e09").text.strip.color(:green)
+        puts ul.css(".fnt_k10").text.strip
+        puts ""
+      end
+    end
+  end
+end
+

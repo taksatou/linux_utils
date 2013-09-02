@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+zero = ""
+if ARGV[0]
+  zero = ARGV[0]
+end
+
+printf "%0#{zero}x", STDIN.read.to_i
