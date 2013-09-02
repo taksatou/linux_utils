@@ -1,16 +1,22 @@
-EXETARGET := 
-LIBTARGET := libims
 
-SOURCES := list.c
+EXETARGET := 
+LIBTARGET := libmy
+
+CSOURCES := list.c
+CXXSOURCES := 
 
 # 
 UNAME := $(shell uname)
 
 # C compiler command
 CC := cc
+CXX := c++
 
 # C compiler flags
 CFLAGS := -g -Wextra -std=c99
+
+# C++ compiler flags
+CXXFLAGS := -g -Wextra
 
 # linker flags, e.g. -L<lib dir> if you have libraries
 # in a nonstandard directory <lib dir>
@@ -26,16 +32,12 @@ CPPFLAGS :=
 # C preprocessor
 CPP :=
 
-# C++ compiler command
-CXX := 
-
-# C++ compiler flags
-CXXFLAGS :=
-
 # C++ preprocessor
 CXXCPP := 
 
-objects := $(subst .c,.o,$(SOURCES))
+objects := $(subst .cc,.o,$(CXXSOURCES))
+#objects := $(subst .c,.o,$(CSOURCES))
+
 
 # targets
 ifdef EXETARGET
@@ -44,18 +46,21 @@ endif
 
 ifdef LIBTARGET
 LIBVERSION ?= 1
-SOTARGET := $(LIBTARGET).so.$(LIBVERSION)
 ATARGET := $(LIBTARGET).a
-LNTARGET := $(LIBTARGET).so
 
 CFLAGS += -fPIC
-TARGET += $(SOTARGET) $(ATARGET) $(LNTARGET)
 
 ifeq ($(UNAME),Linux)
-	LDFLAGS += -Wl,-soname,$(SOTARGET)
+	SOTARGET := $(LIBTARGET).so.$(LIBVERSION)
+	LNTARGET := $(LIBTARGET).so
+	LDFLAGS += -shared -Wl,-soname,$(SOTARGET)
 else ifeq ($(UNAME),Darwin)
-	LDFLAGS += -Wl,-install_name,$(SOTARGET)
+	SOTARGET := $(LIBTARGET).$(LIBVERSION).dylib
+	LNTARGET := $(LIBTARGET).dylib
+	LDFLAGS += -dynamiclib -Wl,-install_name,@rpath/$(SOTARGET),-current_version,$(LIBVERSION)
 endif
+
+TARGET += $(SOTARGET) $(ATARGET) $(LNTARGET)
 
 endif
 
@@ -63,19 +68,23 @@ endif
 all:: $(TARGET)
 
 clean:
-	rm -rf $(objects) $(TARGET) .deps *.d core
+	rm -rf $(objects) $(TARGET) .deps *.d core *.a *.so *.dylib $(TARGET)
 
-.deps: $(SOURCES)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $^ > ./.deps
+.deps: $(CXXSOURCES) $(CSOURCES)
+	if [ $(CSOURCES) ]; then $(CC) $(CFLAGS) $(CPPFLAGS) -MM $(CSOURCES) > ./.deps; fi
+	if [ $(CXXSOURCES) ]; then $(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $(CXXSOURCES) > ./.deps; fi
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
+%.o: %.cc
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+
 $(EXETARGET): $(objects)
-	$(CC) $(LDFLAGS) $(LIBS) $^ -o $@
+	$(CXX) $(LDFLAGS) $(LIBS) $^ -o $@
 
 $(SOTARGET): $(objects)
-	$(CC) -shared $(LDFLAGS) $^ -o $@
+	$(CXX) $(LDFLAGS) $(LIBS) $^ -o $@
 
 $(ATARGET): $(objects)
 	$(AR) cru $@ $^
